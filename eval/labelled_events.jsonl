@@ -1,0 +1,7 @@
+{"raw_log": "Jun 27 20:15:00 dnsmasq[123]: query[A] github.com from 192.168.1.42", "label": "benign", "mitre_technique": null}
+{"raw_log": "Jun 27 20:16:00 dnsmasq[123]: query[AAAA] google.com from 192.168.1.10", "label": "benign", "mitre_technique": null}
+{"raw_log": "Jun 27 20:17:00 dnsmasq[123]: query[A] example.com from 192.168.1.99", "label": "benign", "mitre_technique": null}
+{"raw_log": "Jun 27 20:18:00 dnsmasq[123]: query[A] evil-c2.malware.test from 192.168.1.42", "label": "malicious", "mitre_technique": "T1071.004"}
+{"raw_log": "Jun 27 20:19:00 dnsmasq[123]: query[A] bad.baddomain.org from 192.168.1.50", "label": "malicious", "mitre_technique": "T1071.004"}
+{"raw_log": "Jun 27 20:20:00 dnsmasq[123]: query[A] aHR0cHM6Ly9zdGVhbC1kYXRh.dnstunnel.xyz from 192.168.1.42", "label": "suspicious", "mitre_technique": "T1048"}
+{"raw_log": "Jun 27 20:21:00 dnsmasq[123]: query[PTR] 1.0.0.127.in-addr.arpa from 192.168.1.1", "label": "benign", "mitre_technique": null}
