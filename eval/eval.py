@@ -24,7 +24,7 @@ def baseline_triage_event(event):
 
     # check for known malicious or suspicious patterns
     for token in ["evil", "malware", "baddomain", "c2"]:
-        for token in domain: 
+        if token in domain:
             return "malicious"
     if len(domain.split(".")[0]) > 20:
         # DNS tunnelling indicator
