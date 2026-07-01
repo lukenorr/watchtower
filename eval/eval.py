@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 import sys
+import argparse
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(ROOT))
@@ -16,7 +18,7 @@ def load_labelled_events(path):
                 events.append(json.loads(line))
     return events
 
-def baseline_triage(event):
+def baseline_triage_event(event):
     """test the eval pipeline with simple rules-based traige"""
     domain = event.get("domain", "").lower()
 
@@ -30,6 +32,19 @@ def baseline_triage(event):
     return "benign"
 
 def main():
+    # 
+    parser = argparse.ArgumentParser(
+        description="Watchtower - Evaluation Runner"
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["baseline", "gemini"],
+        default="baseline",
+        help="Triage mode: baseline (defualt) or gemini",
+    )
+    args=parser.parse_args()
+    print(args.mode)
+
     # load the labelled events
     labelled_path = ROOT / "eval" / "labelled_events.jsonl"
     rows = load_labelled_events(labelled_path)
@@ -44,8 +59,16 @@ def main():
             print(f"SKIP: could not parse: {row['raw_log'][:60]}...")
             continue
 
-        # run the baseline triage
-        predicted = baseline_triage(parsed)
+        if args.mode == "gemini":
+            # run gemini triage
+            from src.triage import gemini_triage_event
+            result = gemini_triage_event(parsed)
+            time.sleep(12) # to not overload the gemini quota
+            # get the verdict string
+            predicted = result.get("verdict", "unknown")
+        else:
+            # run the baseline triage
+            predicted = baseline_triage_event(parsed)
 
         # compare
         actual = row["label"]
