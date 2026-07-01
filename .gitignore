@@ -1,7 +1,9 @@
 LEARNING.md
 .env
-logs/* 
+logs/*
 *.logs
 __pycache__/
 venv/
 .DS_Store
+.claude/CLAUDE.local.md
+docs/
