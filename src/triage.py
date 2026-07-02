@@ -1,12 +1,10 @@
-import os
 import json
 import re
 import google.generativeai as genai
-from dotenv import load_dotenv
 
-load_dotenv()
-genai.configure(api_key=os.environ['GEMINI_API_KEY'])
-MODEL_NAME = "gemini-2.5-flash"
+from config import GEMINI_API_KEY, GEMINI_MODEL
+
+genai.configure(api_key=GEMINI_API_KEY)
 
 def gemini_triage_event(event):
     """send parsed DNS event to gemini for triage"""
@@ -30,7 +28,7 @@ def gemini_triage_event(event):
     JSON response:
     """
 
-    model = genai.GenerativeModel(MODEL_NAME)
+    model = genai.GenerativeModel(GEMINI_MODEL)
     response = model.generate_content(prompt)
 
     # collect the response
