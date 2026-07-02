@@ -15,6 +15,7 @@ def gemini_triage_event(event):
     You are a security triage assistant. Classify this DNS log event.
 
     Return ONLY a JSON object with exactly these fields:
+    - "domain": {event.get("domain", "unknown")}
     - "verdict": "benign" or "suspicious" or "malicious"
     - "severity": "low" or "medium" or "high"
     - "confidence": number between 0 and 1
@@ -56,6 +57,7 @@ def gemini_triage_event(event):
         result = json.loads(raw)
     except json.JSONDecodeError:
         result = {
+            "domain" : "unknown",
             "verdict" : "unknown", 
             "severity" : "low",
             "confidence" : 0.0,

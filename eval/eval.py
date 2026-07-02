@@ -7,6 +7,7 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(ROOT))
 
+from src.guardrails import validate_schema, validate_domain
 from src.ingest import parse_pihole_line
 
 def load_labelled_events(path):
@@ -51,7 +52,7 @@ def main():
 
     total = len(rows)
     correct = 0
-
+    
     for row in rows:
         # parse raw log into clean events dict
         parsed = parse_pihole_line(row["raw_log"])
@@ -66,6 +67,18 @@ def main():
             time.sleep(12) # to not overload the gemini quota
             # get the verdict string
             predicted = result.get("verdict", "unknown")
+            # run guardrails to check for errors
+            schema_errors = validate_schema(result)
+            if schema_errors: 
+                print(f"SKIP schema: {parsed['domain']}: {schema_errors}")
+                continue
+            domain_errors = validate_domain(result, parsed)
+            if domain_errors:
+                print(f"SKIP domain: {parsed['domain']}: {domain_errors}")
+                continue
+
+
+
         else:
             # run the baseline triage
             predicted = baseline_triage_event(parsed)
