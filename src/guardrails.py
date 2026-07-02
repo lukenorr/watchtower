@@ -1,4 +1,3 @@
-
 # setup the expected structure from the triage result
 TRIAGE_SCHEMA = {
     "domain" : {"type": str, "required": True},
@@ -9,7 +8,12 @@ TRIAGE_SCHEMA = {
 }
 
 def validate_schema(triage_result):
-    """check the schema aligns"""
+    """
+    Validate triage result against expected schema
+    Input: triage result dict (see schema above)
+    Output: list of error strings; empty if valid
+    Checks: type, bounds, allowed values, required fields
+    """
     # loop through each field and check
     errors = []
     for field, constraints in TRIAGE_SCHEMA.items():
@@ -40,7 +44,12 @@ def validate_schema(triage_result):
     return errors
 
 def validate_domain(triage_result, event):
-    """check the LLM analysed correct domain"""
+    """
+    Check the LLM analysed correct domain
+    Input: triage result dict (see schema at top); parsed event log dict
+    Output: list of error strings; empty if valid
+    Checks: normalisation- lowercase, trailing dot
+    """
     errors = []
     triage_domain = triage_result.get("domain").rstrip(".").lower()
     event_domain = event.get("domain").rstrip(".").lower()
@@ -59,13 +68,6 @@ if __name__ == "__main__":
     sample_result_2 = {
         "domain" : "bbc.virus",
         "verdict" : "malicious", 
-        "severity" : "high",
-        "confidence" : 0.5,
-        "reasoning" : f"JSON parse failed. Raw response: 123"
-    }
-    sample_result_3 = {
-        "domain" : "github.com.",
-        "verdict" : "suspicious", 
         "severity" : "high",
         "confidence" : 0.5,
         "reasoning" : f"JSON parse failed. Raw response: 123"

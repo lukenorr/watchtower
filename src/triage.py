@@ -7,7 +7,12 @@ from config import GEMINI_API_KEY, GEMINI_MODEL
 genai.configure(api_key=GEMINI_API_KEY)
 
 def gemini_triage_event(event):
-    """send parsed DNS event to gemini for triage"""
+    """
+    Send parsed DNS event to gemini for triage.
+    Input: parsed event log from ingest
+    Output: dict with domain/verdict/severity/confidence/reasoning.
+    On parse fail returns 'unknown'.
+    """
 
     prompt = f"""\
     You are a security triage assistant. Classify this DNS log event.

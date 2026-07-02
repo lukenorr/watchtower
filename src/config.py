@@ -1,3 +1,4 @@
+"""Single source of truth for env vars and config"""
 import os
 from dotenv import load_dotenv
 

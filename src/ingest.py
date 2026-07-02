@@ -2,19 +2,12 @@ import re
 import json
 from datetime import datetime
 
-# Normalise event schema
-EVENT_SCHEMA = {
-    "timestamp": None,
-    "source" : "pihole",
-    "log_type" : "dns_query",
-    "domain" : "",
-    "client_ip" : "",
-    "query_type" : "",
-    "raw_log" : "",
-}
-
 def parse_pihole_line(line: str) -> dict | None:
-    """Parse a Pi-hole log line into the event schema dict"""
+    """
+    Parse a Pi-hole log line into the event schema dict
+    Input: raw event log from Pi-hole
+    Output: parsed dict
+    """
 
     pattern = r'^(?P<timestamp>\w{3}\s+\d+\s+\d{2}:\d{2}:\d{2})\s+dnsmasq\[\d+\]:\s+query\[(?P<query_type>\w+)\]\s+(?P<domain>[\w\.-]+)\s+from\s+(?P<client_ip>\d+\.\d+\.\d+\.\d+)'
     match = re.match(pattern, line)
