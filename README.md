@@ -51,11 +51,13 @@ The first working version will:
 
 ## Current status
 
-- Raspberry Pi is running
-- SSH and Tailscale access are working
-- Repository structure is created
-- Initial labelled evaluation examples are started
-- Pi-hole setup, DNS ingestion and LLM triage are next
+- ✅ Raspberry Pi is running (SSH, Tailscale)
+- ✅ Pi-hole log parser (`src/ingest.py`)
+- ✅ Gemini structured triage (`src/triage.py`) — 86% accuracy on 7-event eval set
+- ✅ Post-triage guardrails: schema validation + hallucinated-domain detection
+- ✅ Evaluation harness with baseline and Gemini modes (`eval/`)
+- ⏳ Pipeline orchestrator (`src/main.py`) — next
+- ❌ Threat intel enrichment, alerts, incident reports — coming after orchestrator
 
 ---
 
@@ -109,15 +111,28 @@ Initial examples include benign DNS lookups, suspicious long-subdomain activity,
 
 ## Roadmap
 
-- [x] Raspberry Pi running
-- [x] SSH and Tailscale access working
+### Done
+- [x] Raspberry Pi running (SSH, Tailscale)
 - [x] Initial repository created
-- [x] Initial labelled evaluation examples
+- [x] Pi-hole DNS log parser
+- [x] Gemini structured triage
+- [x] Post-triage guardrails (schema + hallucination detection)
+- [x] Evaluation harness (baseline + Gemini modes)
+- [x] Labelled evaluation examples (7 events, ATT&CK-mapped)
+
+### In progress
+- [ ] Pipeline orchestrator (`src/main.py`)
+- [ ] Centralised config (`config.py`)
+
+### Next
 - [ ] Install and configure Pi-hole
-- [ ] Build Pi-hole DNS log parser
-- [ ] Add Gemini structured triage
-- [ ] Add output validation and guardrails
-- [ ] Add evaluation script
-- [ ] Generate markdown incident summaries
+- [ ] Threat intel enrichment (AbuseIPDB, GreyNoise)
+- [ ] ntfy phone alerts
+- [ ] Markdown incident summaries
 - [ ] Run against live Pi-hole logs
-- [ ] Add ntfy phone alerts
+
+### Post-MVP
+- [ ] Pydantic data models
+- [ ] pytest test suite
+- [ ] LLM provider abstraction (Protocol/ABC)
+- [ ] requirements.txt for Pi deployment
