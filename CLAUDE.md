@@ -67,12 +67,12 @@ When weighing architectural choices, prefer designs that are simpler, more maint
 
 ```text
 watchtower/
+├── main.py             # Pipeline orchestrator (ingest → triage → guardrails → JSONL)
 ├── src/
+│   ├── config.py       # Centralised env/config loading
 │   ├── ingest.py       # Pi-hole log parsing
 │   ├── triage.py       # Gemini LLM triage
-│   ├── guardrails.py   # Cross-cutting validation (not yet implemented)
-│   ├── enrich.py       # Threat intel enrichment (not yet implemented)
-│   └── alert.py        # Incident reporting + phone alerts (not yet implemented)
+│   └── guardrails.py   # Schema validation + hallucinated-domain detection
 ├── eval/
 │   ├── eval.py         # Evaluation runner (baseline + gemini modes)
 │   └── labelled_events.jsonl  # 7 labelled eval events
