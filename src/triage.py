@@ -23,6 +23,7 @@ def gemini_triage_event(event):
     - "severity": "low" or "medium" or "high"
     - "confidence": number between 0 and 1
     - "reasoning": "brief explanation in one sentence"
+    - "mitre_attack": array of MITRE ATT&CK technique IDs (e.g. ["T1071.004"]), or [] if benign
 
     DNS Event:
     Domain: {event.get("domain", "unknown")}
@@ -61,10 +62,11 @@ def gemini_triage_event(event):
     except json.JSONDecodeError:
         result = {
             "domain" : "unknown",
-            "verdict" : "unknown", 
+            "verdict" : "unknown",
             "severity" : "low",
             "confidence" : 0.0,
-            "reasoning" : f"JSON parse failed. Raw response: {raw[:200]} "
+            "reasoning" : f"JSON parse failed. Raw response: {raw[:200]} ",
+            "mitre_attack" : []
         }
     return result
 

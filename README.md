@@ -99,11 +99,11 @@ Planned guardrails:
 
 The repo includes a small labelled evaluation set for DNS events.
 
-The evaluation harness will measure:
+The evaluation harness measures:
 
 - verdict accuracy
 - false positives / false negatives
-- MITRE ATT&CK mapping accuracy
+- MITRE ATT&CK mapping accuracy (gemini mode)
 - whether the LLM returns valid structured output
 
 Initial examples include benign DNS lookups, suspicious long-subdomain activity, and C2-like DNS examples.

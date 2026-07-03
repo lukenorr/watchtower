@@ -4,7 +4,8 @@ TRIAGE_SCHEMA = {
     "verdict" : {"type": str, "allowed":("benign", "suspicious", "malicious", "unknown")},
     "severity" : {"type": str, "allowed":("low", "medium", "high")},
     "confidence" : {"type": (int, float), "min": 0.0, "max": 1.0},
-    "reasoning" : {"type": str, "required": True}
+    "reasoning" : {"type": str, "required": True},
+    "mitre_attack" : {"type": list}
 }
 
 def validate_schema(triage_result):
@@ -60,24 +61,27 @@ def validate_domain(triage_result, event):
 if __name__ == "__main__":
     sample_result_1 = {
         "domain" : "github.ru",
-        "verdict" : "suspicious", 
+        "verdict" : "suspicious",
         "severity" : "low",
         "confidence" : 5.2,
-        "reasoning" : f"JSON parse failed. Raw response: 123"
+        "reasoning" : f"JSON parse failed. Raw response: 123",
+        "mitre_attack" : []
     }
     sample_result_2 = {
         "domain" : "bbc.virus",
-        "verdict" : "malicious", 
+        "verdict" : "malicious",
         "severity" : "high",
         "confidence" : 0.5,
-        "reasoning" : f"JSON parse failed. Raw response: 123"
+        "reasoning" : f"JSON parse failed. Raw response: 123",
+        "mitre_attack" : ["T1071.004"]
     }
     sample_result_3 = {
         "domain" : "github.com.",
-        "verdict" : "suspicious", 
+        "verdict" : "suspicious",
         "severity" : "high",
         "confidence" : 0.5,
-        "reasoning" : f"JSON parse failed. Raw response: 123"
+        "reasoning" : f"JSON parse failed. Raw response: 123",
+        "mitre_attack" : []
     }
     event_result_1 = {
         "timestamp": "2026-06-27T20:15:01",

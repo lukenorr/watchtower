@@ -52,7 +52,8 @@ def main():
 
     total = len(rows)
     correct = 0
-    
+    mitre_correct = 0
+
     for row in rows:
         # parse raw log into clean events dict
         parsed = parse_pihole_line(row["raw_log"])
@@ -90,10 +91,25 @@ def main():
 
         print(f"{parsed['domain']}: expected = {actual} predicted = {predicted}")
 
+        # score ATT&CK mapping (gemini mode only - baseline has no technique output)
+        if args.mode == "gemini":
+            predicted_mitre = result.get("mitre_attack", [])
+            actual_mitre = row.get("mitre_technique")
+            if actual_mitre is None:
+                # benign events should map to no techniques
+                mitre_ok = len(predicted_mitre) == 0
+            else:
+                mitre_ok = actual_mitre in predicted_mitre
+            if mitre_ok:
+                mitre_correct += 1
+            print(f"  mitre: expected = {actual_mitre} predicted = {predicted_mitre}")
+
     print("Watchtower evaluation")
     print(f"Events processed: {total}")
     print(f"Events correct: {correct}")
     print(f"Verdict accuracy: {correct}/{total} ({correct / total:.0%})")
+    if args.mode == "gemini":
+        print(f"ATT&CK mapping accuracy: {mitre_correct}/{total} ({mitre_correct / total:.0%})")
 
 if __name__ == "__main__":
     main()
