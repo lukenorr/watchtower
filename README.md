@@ -55,9 +55,10 @@ The first working version will:
 - ✅ Pi-hole log parser (`src/ingest.py`)
 - ✅ Gemini structured triage (`src/triage.py`) — 86% accuracy on 7-event eval set
 - ✅ Post-triage guardrails: schema validation + hallucinated-domain detection
+- ✅ Centralised config (`src/config.py`)
+- ✅ Pipeline orchestrator (`main.py`) — ingest → triage → guardrails → JSONL output, with rate limiting
 - ✅ Evaluation harness with baseline and Gemini modes (`eval/`)
-- ⏳ Pipeline orchestrator (`src/main.py`) — next
-- ❌ Threat intel enrichment, alerts, incident reports — coming after orchestrator
+- ❌ Threat intel enrichment, ntfy alerts, Pi-hole install — next
 
 ---
 
@@ -115,21 +116,22 @@ Initial examples include benign DNS lookups, suspicious long-subdomain activity,
 - [x] Raspberry Pi running (SSH, Tailscale)
 - [x] Initial repository created
 - [x] Pi-hole DNS log parser
+- [x] Centralised config
 - [x] Gemini structured triage
 - [x] Post-triage guardrails (schema + hallucination detection)
+- [x] Pipeline orchestrator (ingest → triage → guardrails → JSONL)
 - [x] Evaluation harness (baseline + Gemini modes)
 - [x] Labelled evaluation examples (7 events, ATT&CK-mapped)
 
 ### In progress
-- [ ] Pipeline orchestrator (`src/main.py`)
-- [ ] Centralised config (`config.py`)
-
-### Next
-- [ ] Install and configure Pi-hole
 - [ ] Threat intel enrichment (AbuseIPDB, GreyNoise)
 - [ ] ntfy phone alerts
+- [ ] Install and configure Pi-hole
+
+### Next
 - [ ] Markdown incident summaries
 - [ ] Run against live Pi-hole logs
+- [ ] Raspberry Pi deployment (systemd service)
 
 ### Post-MVP
 - [ ] Pydantic data models
