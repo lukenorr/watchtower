@@ -124,7 +124,7 @@ Initial examples include benign DNS lookups, suspicious long-subdomain activity,
 - [x] Labelled evaluation examples (7 events, ATT&CK-mapped)
 
 ### In progress
-- [ ] Threat intel enrichment (AbuseIPDB, GreyNoise)
+- [ ] Threat intel enrichment (URLhaus — domain reputation; AbuseIPDB/GreyNoise deferred for auth.log IP events)
 - [ ] ntfy phone alerts
 - [ ] Install and configure Pi-hole
 

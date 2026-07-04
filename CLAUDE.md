@@ -35,7 +35,7 @@ Full architecture documentation lives in [docs/ARCHITECTURE.md](../docs/ARCHITEC
 | Language | Python 3 | Standard library first |
 | LLM | Gemini 2.5 Flash | Free tier, fast iteration. Should eventually abstract behind a Protocol/ABC so swapping providers is a config change. |
 | Hardware | Raspberry Pi (Raspberry Pi OS) | 1–4 GB RAM — design accordingly |
-| Threat intel | AbuseIPDB + GreyNoise | Free tiers, not yet implemented |
+| Threat intel | URLhaus (domain) + AbuseIPDB/GreyNoise (IP, deferred) | Routed by data type: domain→URLhaus, IP→AbuseIPDB. URLhaus first (no key, matches DNS source). |
 | Alerting | ntfy.sh | Push to phone, not yet implemented |
 | Storage | JSONL | Zero dependencies, human-readable, append-only |
 | Deployment | systemd or cron loop | Not yet implemented |
