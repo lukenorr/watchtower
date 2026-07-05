@@ -72,7 +72,8 @@ watchtower/
 │   ├── config.py       # Centralised env/config loading
 │   ├── ingest.py       # Pi-hole log parsing
 │   ├── triage.py       # Gemini LLM triage
-│   └── guardrails.py   # Schema validation + hallucinated-domain detection
+│   ├── guardrails.py   # Schema validation + hallucinated-domain detection
+│   └── enrich.py       # URLhaus threat intel enrichment
 ├── eval/
 │   ├── eval.py         # Evaluation runner (baseline + gemini modes)
 │   └── labelled_events.jsonl  # 7 labelled eval events
