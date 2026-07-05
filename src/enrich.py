@@ -39,5 +39,32 @@ def check_urlhaus(domain):
     else:
         return {"status": "error", "message": f"unexpected query_status: {query_status}"}
        
+def enrich_event(event):
+    """
+    Gates enrichment on event verdict and nests URLhaus results.
+    Benign events pass through unmodified.
+    INPUT: event dict (must have 'verdict' and 'domain' keys)
+    OUTPUT: same event dict, possibly with 'enrichment' key added
+    """
+    if event["verdict"] not in ("suspicious", "malicious"):
+        return event
+    result = check_urlhaus(event["domain"])
+    event["enrichment"] = {"urlhaus": result}
+    return event
 
+if __name__ == "__main__":
+    # Test 1: benign event skips enrichment entirely (no API call)
+    benign = {"verdict": "benign", "domain": "evil-c2.malware.test"}
+    result = enrich_event(benign)
+    assert "enrichment" not in result, f"benign should skip, got {result.get('enrichment')}"
+    print("Test 1 passed: benign skipped")
 
+    # Test 2: suspicious event gets enriched (will return 'clean' for google.com)
+    suspicious = {"verdict": "suspicious", "domain": "google.com"}
+    result = enrich_event(suspicious)
+    assert "enrichment" in result, "suspicious should have enrichment"
+    assert "urlhaus" in result["enrichment"], "enrichment should nest under 'urlhaus'"
+    print(f"Test 2 passed: enrichment status = {result['enrichment']['urlhaus']['status']}")
+
+    print("All enrich smoke tests passed.")
+    

@@ -11,6 +11,7 @@ sys.path.append(str(ROOT / "src"))
 from ingest import parse_pihole_line
 from triage import gemini_triage_event
 from guardrails import validate_schema, validate_domain
+from enrich import enrich_event
 
 def main():
     parser = argparse.ArgumentParser(description="Watchtower pipeline")
@@ -56,6 +57,9 @@ def main():
                     if domain_errors:
                         print(f"Domain issue: {domain_errors}")
                         continue
+
+                    # enrichment - run domain through URLhaus
+                    enrich_event(triaged)
 
                     # write results
                     result = {
