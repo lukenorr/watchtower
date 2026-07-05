@@ -12,6 +12,7 @@ from ingest import parse_pihole_line
 from triage import gemini_triage_event
 from guardrails import validate_schema, validate_domain
 from enrich import enrich_event
+from alert import send_ntfy
 
 def main():
     parser = argparse.ArgumentParser(description="Watchtower pipeline")
@@ -35,42 +36,44 @@ def main():
                 elif not isinstance(parsed, dict):
                     print("parsed is not dictionary")
                     continue
-                else:
-                    print(f"parsed domain: {parsed['domain']}")
+                
+                print(f"parsed domain: {parsed['domain']}")
 
-                    # triage - triage event with gemini
-                    try:
-                        triaged = gemini_triage_event(parsed)
-                    except Exception as e:
-                        print(f"Gemini API error: {e}")
-                        break    
-                    print(f"triage verdict: {triaged['verdict']}")
-                    # avoid burning the gemini limit
-                    time.sleep(12)
+                # triage - triage event with gemini
+                try:
+                    triaged = gemini_triage_event(parsed)
+                except Exception as e:
+                    print(f"Gemini API error: {e}")
+                    continue
+                print(f"triage verdict: {triaged['verdict']}")
+                # avoid burning the gemini limit
+                time.sleep(12)
 
-                    # guardrails - validate schema and domain
-                    schema_errors = validate_schema(triaged)
-                    if schema_errors:
-                        print(f"Schema issue: {schema_errors}")
-                        continue
-                    domain_errors = validate_domain(triaged, parsed)
-                    if domain_errors:
-                        print(f"Domain issue: {domain_errors}")
-                        continue
+                # guardrails - validate schema and domain
+                schema_errors = validate_schema(triaged)
+                if schema_errors:
+                    print(f"Schema issue: {schema_errors}")
+                    continue
+                domain_errors = validate_domain(triaged, parsed)
+                if domain_errors:
+                    print(f"Domain issue: {domain_errors}")
+                    continue
 
-                    # enrichment - run domain through URLhaus
-                    enrich_event(triaged)
+                # enrichment - run domain through URLhaus
+                enrich_event(triaged)
 
-                    # write results
-                    result = {
-                        **parsed,
-                        **triaged,
-                        "guardrail_errors" : []
-                    }
-                    a.write(json.dumps(result) + "\n")
+                # alert - push notification for suspicious or malicious
+                if triaged["verdict"] in ("suspicious", "malicious"):
+                    result = send_ntfy(triaged)
+                    print(f"alert: {result['status']}")
 
-
-
+                # write results
+                result = {
+                    **parsed,
+                    **triaged,
+                    "guardrail_errors" : []
+                }
+                a.write(json.dumps(result) + "\n")
 
 if __name__ == "__main__": 
     main()

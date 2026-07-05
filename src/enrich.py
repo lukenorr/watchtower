@@ -21,7 +21,7 @@ def check_urlhaus(domain):
           body = resp.read().decode()
           response = json.loads(body)
     except Exception as e:
-       return {"status" : "error", "message": str(e)}
+       return {"status" : "error", "message" : str(e)}
        
     query_status = response["query_status"]
        
@@ -33,11 +33,11 @@ def check_urlhaus(domain):
             threats.add(url["threat"])
             for tag in url["tags"]:
                 tags.add(tag)
-        return {"status": "hit", "url_count": len(response["urls"]), "threats": list(threats), "tags": list(tags)}
+        return {"status" : "hit", "url_count" : len(response["urls"]), "threats" : list(threats), "tags" : list(tags)}
     elif query_status == "no_results":
-        return {"status": "clean"}
+        return {"status" : "clean"}
     else:
-        return {"status": "error", "message": f"unexpected query_status: {query_status}"}
+        return {"status" : "error", "message" : f"unexpected query_status: {query_status}"}
        
 def enrich_event(event):
     """
@@ -49,7 +49,7 @@ def enrich_event(event):
     if event["verdict"] not in ("suspicious", "malicious"):
         return event
     result = check_urlhaus(event["domain"])
-    event["enrichment"] = {"urlhaus": result}
+    event["enrichment"] = {"urlhaus" : result}
     return event
 
 if __name__ == "__main__":

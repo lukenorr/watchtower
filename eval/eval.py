@@ -33,7 +33,6 @@ def baseline_triage_event(event):
     return "benign"
 
 def main():
-    # 
     parser = argparse.ArgumentParser(
         description="Watchtower - Evaluation Runner"
     )
@@ -41,9 +40,9 @@ def main():
         "--mode",
         choices=["baseline", "gemini"],
         default="baseline",
-        help="Triage mode: baseline (defualt) or gemini",
+        help="Triage mode: baseline (default) or gemini",
     )
-    args=parser.parse_args()
+    args = parser.parse_args()
     print(args.mode)
 
     # load the labelled events

@@ -20,7 +20,7 @@ def parse_pihole_line(line: str) -> dict | None:
     iso_ts = timestamp.isoformat()
 
     return {
-        "timestamp": iso_ts,
+        "timestamp" : iso_ts,
         "source" : "pihole",
         "log_type" : "dns_query",
         "domain" : match.group('domain'),

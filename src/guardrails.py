@@ -1,11 +1,11 @@
 # setup the expected structure from the triage result
 TRIAGE_SCHEMA = {
-    "domain" : {"type": str, "required": True},
-    "verdict" : {"type": str, "allowed":("benign", "suspicious", "malicious", "unknown")},
-    "severity" : {"type": str, "allowed":("low", "medium", "high")},
-    "confidence" : {"type": (int, float), "min": 0.0, "max": 1.0},
-    "reasoning" : {"type": str, "required": True},
-    "mitre_attack" : {"type": list}
+    "domain" : {"type" : str, "required" : True},
+    "verdict" : {"type" : str, "allowed" : ("benign", "suspicious", "malicious", "unknown")},
+    "severity" : {"type" : str, "allowed" : ("low", "medium", "high")},
+    "confidence" : {"type" : (int, float), "min" : 0.0, "max" : 1.0},
+    "reasoning" : {"type" : str, "required" : True},
+    "mitre_attack" : {"type" : list}
 }
 
 def validate_schema(triage_result):
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         "mitre_attack" : []
     }
     event_result_1 = {
-        "timestamp": "2026-06-27T20:15:01",
+        "timestamp" : "2026-06-27T20:15:01",
         "source" : "pihole",
         "log_type" : "dns_query",
         "domain" : "github.com",

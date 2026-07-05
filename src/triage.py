@@ -74,10 +74,10 @@ def gemini_triage_event(event):
 if __name__ == "__main__":
     # smoke test
     sample = {
-        "domain": "suspicious-xyz.xyz",
-        "client_ip": "192.168.1.100",
-        "query_type": "A",
-        "raw_log": "query: A suspicious-xyz.xyz from 192.168.1.100"
+        "domain" : "suspicious-xyz.xyz",
+        "client_ip" : "192.168.1.100",
+        "query_type" : "A",
+        "raw_log" : "query: A suspicious-xyz.xyz from 192.168.1.100"
     }
 
     result = gemini_triage_event(sample)
