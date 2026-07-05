@@ -58,7 +58,10 @@ The first working version will:
 - ✅ Centralised config (`src/config.py`)
 - ✅ Pipeline orchestrator (`main.py`) — ingest → triage → guardrails → JSONL output, with rate limiting
 - ✅ Evaluation harness with baseline and Gemini modes (`eval/`)
-- ❌ Threat intel enrichment, ntfy alerts, Pi-hole install — next
+- ✅ Threat intel enrichment (URLhaus domain reputation)
+- ✅ ntfy.sh phone alerts
+- ✅ Pipeline: ingest → triage → guardrails → enrich → alert → JSONL
+- ❌ Pi-hole install — next
 
 ---
 
@@ -122,10 +125,10 @@ Initial examples include benign DNS lookups, suspicious long-subdomain activity,
 - [x] Pipeline orchestrator (ingest → triage → guardrails → JSONL)
 - [x] Evaluation harness (baseline + Gemini modes)
 - [x] Labelled evaluation examples (7 events, ATT&CK-mapped)
+- [x] Threat intel enrichment (URLhaus for domains; AbuseIPDB/GreyNoise deferred for auth.log IP events)
+- [x] ntfy phone alerts
 
 ### In progress
-- [ ] Threat intel enrichment (URLhaus — domain reputation; AbuseIPDB/GreyNoise deferred for auth.log IP events)
-- [ ] ntfy phone alerts
 - [ ] Install and configure Pi-hole
 
 ### Next

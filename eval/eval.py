@@ -64,7 +64,7 @@ def main():
             # run gemini triage
             from src.triage import gemini_triage_event
             result = gemini_triage_event(parsed)
-            time.sleep(12) # to not overload the gemini quota
+            time.sleep(12)  # avoid burning the gemini quota
             # get the verdict string
             predicted = result.get("verdict", "unknown")
             # run guardrails to check for errors
@@ -76,8 +76,6 @@ def main():
             if domain_errors:
                 print(f"SKIP domain: {parsed['domain']}: {domain_errors}")
                 continue
-
-
 
         else:
             # run the baseline triage

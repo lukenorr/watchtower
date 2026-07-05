@@ -18,10 +18,10 @@ def check_urlhaus(domain):
 
     try:
         with urllib.request.urlopen(req, timeout=10) as resp:
-          body = resp.read().decode()
-          response = json.loads(body)
+            body = resp.read().decode()
+            response = json.loads(body)
     except Exception as e:
-       return {"status" : "error", "message" : str(e)}
+        return {"status" : "error", "message" : str(e)}
        
     query_status = response["query_status"]
        

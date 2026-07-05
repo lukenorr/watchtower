@@ -52,8 +52,8 @@ def validate_domain(triage_result, event):
     Checks: normalisation- lowercase, trailing dot
     """
     errors = []
-    triage_domain = triage_result.get("domain").rstrip(".").lower()
-    event_domain = event.get("domain").rstrip(".").lower()
+    triage_domain = (triage_result.get("domain") or "").rstrip(".").lower()
+    event_domain = (event.get("domain") or "").rstrip(".").lower()
     if triage_domain != event_domain:
         errors.append(f"triage domain ({triage_domain}) not the same as event domain ({event_domain})")
     return errors
