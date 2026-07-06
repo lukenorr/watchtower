@@ -15,18 +15,22 @@ Watchtower is intentionally designed as a small, well-engineered system rather t
 ## Architecture
 
 ```
-Logs → Ingestion → Normalisation → LLM Triage → Guardrails (cross-cutting) → Threat Enrichment → Incident Report → Phone Notification
-                                                                                    ↓
-                                                                            Evaluation Harness
+Logs → Ingestion → Normalisation → LLM Triage → Guardrails → Threat Enrichment → Phone Notification → JSONL
+                                                                              ↓
+                                                                      Evaluation Harness
 ```
 
-Guardrails are **cross-cutting**, not a single pipeline stage. They apply at three points:
+Guardrails are applied at multiple points in the pipeline:
 
-1. **Post-triage:** schema validation, hallucinated-domain detection
-2. **Post-enrichment:** verdict re-evaluation against threat-intel data
-3. **Pre-alert:** severity gate (never auto-act on critical), rate limiting
+**Built:**
+- **Post-triage:** schema validation (types, bounds, allowed values), hallucinated-domain detection
+- **Pre-enrichment:** benign events skip enrichment entirely (save API quota)
 
-Full architecture documentation lives in [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md). Key design decisions and their rationale are recorded in [docs/ENGINEERING_JOURNAL.md](../docs/ENGINEERING_JOURNAL.md).
+**Planned:**
+- **Post-enrichment:** verdict re-evaluation against threat-intel data
+- **Pre-alert:** severity gate, rate limiting
+
+Full architecture documentation and design decision rationale live in `docs/` (local only — gitignored as personal engineering notes).
 
 ### Tech stack
 
@@ -36,13 +40,13 @@ Full architecture documentation lives in [docs/ARCHITECTURE.md](../docs/ARCHITEC
 | LLM | Gemini 2.5 Flash | Free tier, fast iteration. Should eventually abstract behind a Protocol/ABC so swapping providers is a config change. |
 | Hardware | Raspberry Pi (Raspberry Pi OS) | 1–4 GB RAM — design accordingly |
 | Threat intel | URLhaus (domain) + AbuseIPDB/GreyNoise (IP, deferred) | Routed by data type: domain→URLhaus, IP→AbuseIPDB. URLhaus first (no key, matches DNS source). |
-| Alerting | ntfy.sh | Push to phone, not yet implemented |
+| Alerting | ntfy.sh | Push to phone via `src/alert.py` |
 | Storage | JSONL | Zero dependencies, human-readable, append-only |
 | Deployment | systemd or cron loop | Not yet implemented |
 
 ## Engineering Standards
 
-These standards guide all code and design decisions. The full version lives in [docs/ENGINEERING_PRINCIPLES.md](../docs/ENGINEERING_PRINCIPLES.md).
+These standards guide all code and design decisions.
 
 ### Optimise for
 
@@ -67,37 +71,34 @@ When weighing architectural choices, prefer designs that are simpler, more maint
 
 ```text
 watchtower/
-├── main.py             # Pipeline orchestrator (ingest → triage → guardrails → JSONL)
+├── main.py             # Pipeline orchestrator (ingest → triage → guardrails → enrich → alert → JSONL)
+├── CLAUDE.md           # This file (committed)
+├── requirements.txt    # Python dependencies
 ├── src/
 │   ├── config.py       # Centralised env/config loading
 │   ├── ingest.py       # Pi-hole log parsing
 │   ├── triage.py       # Gemini LLM triage
 │   ├── guardrails.py   # Schema validation + hallucinated-domain detection
-│   └── enrich.py       # URLhaus threat intel enrichment
+│   ├── enrich.py       # URLhaus threat intel enrichment
+│   └── alert.py        # ntfy.sh push notifications
 ├── eval/
 │   ├── eval.py         # Evaluation runner (baseline + gemini modes)
 │   └── labelled_events.jsonl  # 7 labelled eval events
-├── docs/
-│   ├── ARCHITECTURE.md
-│   ├── ENGINEERING_JOURNAL.md  # Design decisions and rationale — read this first
-│   ├── ENGINEERING_PRINCIPLES.md
-│   └── PROJECT_BRIEF.md
-├── logs/
-└── .claude/
-    └── CLAUDE.md       # This file (committed)
+├── docs/               # Design docs (gitignored — local only)
+├── logs/               # Pipeline output (gitignored)
+└── .claude/            # Claude Code config
 ```
 
 ## Development Workflow
 
-1. **Read the docs first.** Before making changes, review `docs/ENGINEERING_JOURNAL.md` for current status and recent decisions.
-2. **Keep it small.** Prefer small, incremental changes over large rewrites.
-3. **Document decisions.** Record significant architectural or engineering decisions in `docs/ENGINEERING_JOURNAL.md` with a short rationale.
-4. **Maintain evaluation integrity.** The eval harness (`eval/eval.py`) should pass before and after changes to the triage pipeline.
-5. **Respect the scope.** Refer to `docs/PROJECT_BRIEF.md` for the definition of done. Features not in the brief wait until after MVP.
+1. **Keep it small.** Prefer small, incremental changes over large rewrites.
+2. **Document decisions.** Record significant architectural or engineering decisions in the local engineering journal.
+3. **Maintain evaluation integrity.** The eval harness (`eval/eval.py`) should pass before and after changes to the triage pipeline.
+4. **Respect the scope.** Features beyond the definition of done are out of scope until the MVP is complete and evaluated.
 
 ## Documentation Conventions
 
-- Architecture decisions go in `docs/ENGINEERING_JOURNAL.md` with date and rationale
+- Architecture decisions go in the local engineering journal with date and rationale
 - Component-level documentation lives in the relevant source file as docstrings
 - The README is the public-facing project overview — keep it current with actual progress
-- This CLAUDE.md is committed and public — keep it professional and project-focused
+- This CLAUDE.md is committed and public — keep it professional and project-focused. Do not link to gitignored paths.
