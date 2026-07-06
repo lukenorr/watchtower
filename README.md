@@ -10,7 +10,7 @@ The project is also a way for me to explore practical AI-assisted SOC automation
 
 ## Why I’m building this
 
-I have production experience building SOAR playbooks, Python integrations and SOC automation. Watchtower applies the same automation mindset to my own home infrastructure — where the SOC team is me, the SIEM is a JSONL file, and the incident response budget is whatever snacks are in the kitchen.
+I have production experience building SOAR playbooks, Python integrations and SOC automation. Watchtower applies the same automation mindset to my own home infrastructure — where the SOC team is me and the SIEM is a JSONL file.
 
 The goal is intentionally small:
 
@@ -61,7 +61,34 @@ Watchtower currently:
 - ✅ Evaluation harness with baseline and Gemini modes (`eval/`)
 - ✅ Threat intel enrichment (URLhaus domain reputation)
 - ✅ ntfy.sh phone alerts
-- ❌ Pi-hole install — next
+- 🎯 **Next: install Pi-hole and point Watchtower at live traffic.** The pipeline is proven against labelled events; the remaining step is wiring it to my real network so the alerts on my phone come from my actual devices, not test data.
+
+---
+
+## Running it
+
+```bash
+git clone https://github.com/lukenorr/watchtower.git
+cd watchtower
+pip install -r requirements.txt
+cp .env.example .env   # add your Gemini, URLhaus, and ntfy credentials
+```
+
+Run the pipeline against a Pi-hole format log file:
+
+```bash
+echo "Jun 27 20:15:00 dnsmasq[123]: query[A] example.com from 192.168.1.42" > sample.log
+python main.py --log-file sample.log
+```
+
+Results are written to `logs/run-<timestamp>.jsonl`. Suspicious or malicious verdicts trigger a phone push via your ntfy topic.
+
+Run the evaluation harness:
+
+```bash
+python eval/eval.py                 # rules-based baseline
+python eval/eval.py --mode gemini   # LLM triage + guardrails + ATT&CK scoring
+```
 
 ---
 
@@ -133,9 +160,9 @@ Initial examples include benign DNS lookups (things I actually visit), suspiciou
 - [ ] Install and configure Pi-hole
 
 ### Next
-- [ ] Markdown incident summaries
 - [ ] Run against live Pi-hole logs
 - [ ] Raspberry Pi deployment (systemd service)
+- [ ] Markdown incident summaries
 
 ### Post-MVP
 - [ ] Pydantic data models
