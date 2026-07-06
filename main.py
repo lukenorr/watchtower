@@ -21,6 +21,7 @@ def main():
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_path = ROOT / "logs" / f"run-{timestamp}.jsonl"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
 
     # read the log file
     with open(args.log_file, "r") as f:
@@ -50,28 +51,24 @@ def main():
                 time.sleep(12)
 
                 # guardrails - validate schema and domain
-                schema_errors = validate_schema(triaged)
-                if schema_errors:
-                    print(f"Schema issue: {schema_errors}")
-                    continue
-                domain_errors = validate_domain(triaged, parsed)
-                if domain_errors:
-                    print(f"Domain issue: {domain_errors}")
-                    continue
+                guardrail_errors = validate_schema(triaged) + validate_domain(triaged, parsed)
+                if guardrail_errors:
+                    for error in guardrail_errors:
+                        print(f"guardrail: {error}")
+                else:
+                    # enrichment - run domain through URLhaus
+                    enrich_event(triaged)
 
-                # enrichment - run domain through URLhaus
-                enrich_event(triaged)
-
-                # alert - push notification for suspicious or malicious
-                if triaged["verdict"] in ("suspicious", "malicious"):
-                    result = send_ntfy(triaged)
-                    print(f"alert: {result['status']}")
+                    # alert - push notification for suspicious or malicious
+                    if triaged["verdict"] in ("suspicious", "malicious"):
+                        alert_result = send_ntfy(triaged)
+                        print(f"alert: {alert_result['status']}")
 
                 # write results
                 result = {
                     **parsed,
                     **triaged,
-                    "guardrail_errors" : []
+                    "guardrail_errors" : guardrail_errors
                 }
                 a.write(json.dumps(result) + "\n")
 
