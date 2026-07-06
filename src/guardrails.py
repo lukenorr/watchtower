@@ -24,7 +24,7 @@ def validate_schema(triage_result):
             continue
         # check type
         if not isinstance(value, constraints.get("type")):
-            errors.append(f"invalid type={type(value)}, expected={constraints.get('type')}")
+            errors.append(f"'{field}': invalid type={type(value)}, expected={constraints.get('type')}")
             continue
         # check number is within bounds
         if isinstance(value, (int, float)):
@@ -35,12 +35,12 @@ def validate_schema(triage_result):
                 continue
         # check if required
         if constraints.get("required") and isinstance(value, str) and len(value.strip()) == 0:
-            errors.append("string required")
+            errors.append(f"'{field}': string required")
             continue
         # check in allowed list
         if constraints.get("allowed"):
             if value not in constraints.get("allowed"):
-                errors.append(f"{value} not in allowed schema values")
+                errors.append(f"'{field}': {value} not in allowed values")
                 continue
     return errors
 
