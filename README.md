@@ -26,26 +26,27 @@ The parts I care most about are:
 
 ---
 
-## Planned MVP
+## MVP
 
 ```text
 Pi-hole logs
   -> ingest and normalise
   -> Gemini structured triage
   -> guardrails
-  -> incident summary / alert
-  -> evaluation harness
+  -> threat intel enrichment
+  -> phone alert
+  -> JSONL output
 ```
 
-The first working version will:
+Watchtower currently:
 
-- parse Pi-hole DNS query logs
-- normalise raw log lines into a common event format
-- use Gemini for structured JSON triage
-- validate the model output
-- flag suspicious or malicious DNS activity
-- evaluate results against labelled benign, suspicious and malicious examples
-- generate simple markdown incident summaries
+- parses Pi-hole DNS query logs into structured events
+- triages each event with Gemini 2.5 Flash for structured JSON classification
+- validates model output (schema enforcement, hallucinated-domain detection)
+- enriches suspicious or malicious domains against URLhaus threat intel
+- pushes phone alerts via ntfy.sh for suspicious and malicious verdicts
+- evaluates results against a labelled set of benign, suspicious, and malicious examples
+- writes all events to append-only JSONL with full guardrail and enrichment context
 
 ---
 
@@ -64,20 +65,18 @@ The first working version will:
 
 ---
 
-## Example target output
+## Example output
 
-The intended triage output is structured JSON, not free-text:
+The triage output is structured JSON, not free-text:
 
 ```json
 {
+  "domain": "suspicious-longstring.example.com",
   "verdict": "suspicious",
   "severity": "medium",
-  "category": "possible_dns_exfiltration",
   "confidence": 0.78,
   "reasoning": "The queried domain contains a long encoded-looking subdomain, which may indicate DNS tunnelling or staged exfiltration.",
-  "recommended_action": "Review DNS query volume from the client host and check for repeated similar queries.",
-  "mitre_attack": ["T1048"],
-  "indicators": ["example-suspicious-domain.test"]
+  "mitre_attack": ["T1048"]
 }
 ```
 
@@ -142,4 +141,3 @@ Initial examples include benign DNS lookups (things I actually visit), suspiciou
 - [ ] Pydantic data models
 - [ ] pytest test suite
 - [ ] LLM provider abstraction (Protocol/ABC)
-- [ ] requirements.txt for Pi deployment
