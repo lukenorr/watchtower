@@ -61,7 +61,9 @@ Watchtower currently:
 - ✅ Evaluation harness with baseline and Gemini modes (`eval/`)
 - ✅ Threat intel enrichment (URLhaus domain reputation)
 - ✅ ntfy.sh phone alerts
-- 🎯 **Next: install Pi-hole and point Watchtower at live traffic.** The pipeline is proven against labelled events; the remaining step is wiring it to my real network so the alerts on my phone come from my actual devices, not test data.
+- ✅ Pi-hole installed and configured on the Pi
+- ✅ Pipeline tested against real Pi-hole log data (manual run)
+- 🎯 Next: live tail mode — pipeline runs manually, not continuously
 
 ---
 
@@ -155,14 +157,19 @@ Initial examples include benign DNS lookups (things I actually visit), suspiciou
 - [x] Labelled evaluation examples (7 events, ATT&CK-mapped)
 - [x] Threat intel enrichment (URLhaus for domains; AbuseIPDB/GreyNoise deferred for auth.log IP events)
 - [x] ntfy phone alerts
+- [x] Install and configure Pi-hole
+- [x] Initial deployment to Pi (tested against real logs)
 
 ### In progress
-- [ ] Install and configure Pi-hole
+
+- [ ] Live tail mode (continuous monitoring)
 
 ### Next
-- [ ] Run against live Pi-hole logs
-- [ ] Raspberry Pi deployment (systemd service)
+
 - [ ] Markdown incident summaries
+- [ ] Post-enrichment guardrails (verdict re-evaluation)
+- [ ] Pre-alert guardrails (severity gate, rate limiting)
+- [ ] Raspberry Pi deployment (systemd service)
 
 ### Post-MVP
 - [ ] Pydantic data models

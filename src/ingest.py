@@ -10,6 +10,8 @@ def parse_pihole_line(line):
     OUTPUT: parsed dict
     """
 
+    # example Pi-hole log line:
+    # "Jul  6 22:47:46 dnsmasq[1429725]: query[A] google.com from 127.0.0.1"
     pattern = r'^(?P<timestamp>\w{3}\s+\d+\s+\d{2}:\d{2}:\d{2})\s+dnsmasq\[\d+\]:\s+query\[(?P<query_type>\w+)\]\s+(?P<domain>[\w\.-]+)\s+from\s+(?P<client_ip>\d+\.\d+\.\d+\.\d+)'
     match = re.match(pattern, line)
     if not match:
