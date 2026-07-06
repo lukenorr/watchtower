@@ -33,7 +33,7 @@ def main():
                 if parsed is None:
                     print("None returned when parsing")
                     continue
-                elif not isinstance(parsed, dict):
+                if not isinstance(parsed, dict):
                     print("parsed is not dictionary")
                     continue
                 
@@ -75,6 +75,5 @@ def main():
                 }
                 a.write(json.dumps(result) + "\n")
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     main()
-                

@@ -8,10 +8,10 @@ genai.configure(api_key=GEMINI_API_KEY)
 
 def gemini_triage_event(event):
     """
-    Send parsed DNS event to gemini for triage.
-    Input: parsed event log from ingest
-    Output: dict with domain/verdict/severity/confidence/reasoning.
-    On parse fail returns 'unknown'.
+    Send parsed DNS event to Gemini for triage.
+
+    INPUT: parsed event log from ingest
+    OUTPUT: dict with domain/verdict/severity/confidence/reasoning
     """
 
     prompt = f"""\

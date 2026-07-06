@@ -16,5 +16,6 @@ if not URLHAUS_API_KEY:
     raise ValueError("URLHAUS_API_KEY not set in environment or .env file")
 
 NTFY_TOPIC = os.environ.get("NTFY_TOPIC")
+
 if not NTFY_TOPIC:
     raise ValueError("NTFY_TOPIC not set in environment or .env file")

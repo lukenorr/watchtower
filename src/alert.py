@@ -13,7 +13,8 @@ NTFY_URL = f"https://ntfy.sh/{NTFY_TOPIC}"
 
 def send_ntfy(event):
     """
-    POST event details to ntfy.sh API to create an alert
+    POST event details to ntfy.sh API to create an alert.
+
     INPUT: event dict
     OUTPUT: alert status dict
     """

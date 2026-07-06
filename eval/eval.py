@@ -20,7 +20,7 @@ def load_labelled_events(path):
     return events
 
 def baseline_triage_event(event):
-    """test the eval pipeline with simple rules-based traige"""
+    """test the eval pipeline with simple rules-based triage"""
     domain = event.get("domain", "").lower()
 
     # check for known malicious or suspicious patterns

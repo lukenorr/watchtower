@@ -1,4 +1,4 @@
-# setup the expected structure from the triage result
+# expected structure of a triage result.
 TRIAGE_SCHEMA = {
     "domain" : {"type" : str, "required" : True},
     "verdict" : {"type" : str, "allowed" : ("benign", "suspicious", "malicious", "unknown")},
@@ -10,10 +10,10 @@ TRIAGE_SCHEMA = {
 
 def validate_schema(triage_result):
     """
-    Validate triage result against expected schema
-    Input: triage result dict (see schema above)
-    Output: list of error strings; empty if valid
-    Checks: type, bounds, allowed values, required fields
+    Validate triage result against expected schema.
+
+    INPUT: triage result dict (see schema above)
+    OUTPUT: list of error strings; empty if valid
     """
     # loop through each field and check
     errors = []
@@ -34,7 +34,7 @@ def validate_schema(triage_result):
                 errors.append(f"{field} {value} is outside numerical bounds [{field_min}, {field_max}]")
                 continue
         # check if required
-        if constraints.get("required") and isinstance(value, str) and len(value.strip())==0:
+        if constraints.get("required") and isinstance(value, str) and len(value.strip()) == 0:
             errors.append("string required")
             continue
         # check in allowed list
@@ -46,12 +46,13 @@ def validate_schema(triage_result):
 
 def validate_domain(triage_result, event):
     """
-    Check the LLM analysed correct domain
-    Input: triage result dict (see schema at top); parsed event log dict
-    Output: list of error strings; empty if valid
-    Checks: normalisation- lowercase, trailing dot
+    Check that the LLM analysed the correct domain.
+
+    INPUT: triage result dict (see schema at top); parsed event log dict
+    OUTPUT: list of error strings; empty if valid
     """
     errors = []
+    # normalise both domains and compare
     triage_domain = (triage_result.get("domain") or "").rstrip(".").lower()
     event_domain = (event.get("domain") or "").rstrip(".").lower()
     if triage_domain != event_domain:
@@ -101,4 +102,4 @@ if __name__ == "__main__":
     assert len(errors) == 0, f"should be clean, got {errors}"
     errors = validate_domain(sample_result_1, event_result_1)
     assert len(errors) > 0, "should catch domain mismatch"
-    print("All schema validation tests passed.")       
+    print("All schema validation tests passed.")
