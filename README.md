@@ -54,10 +54,10 @@ Watchtower currently:
 
 - ✅ Raspberry Pi is running (SSH, Tailscale)
 - ✅ Pi-hole log parser (`src/ingest.py`)
-- ✅ Gemini structured triage (`src/triage.py`) — 86% accuracy on 7-event eval set
+- ✅ Gemini structured triage (`src/triage.py`) — 6 of 7 correct (86%) on a 7-event eval set
 - ✅ Post-triage guardrails: schema validation + hallucinated-domain detection
 - ✅ Centralised config (`src/config.py`)
-- ✅ Pipeline orchestrator (`main.py`) — ingest → triage → guardrails → enrich → alert → JSONL, with rate limiting
+- ✅ Pipeline orchestrator (`main.py`) — ingest → triage → guardrails → enrich → alert → JSONL, pausing between model calls to stay within the API quota
 - ✅ Evaluation harness with baseline and Gemini modes (`eval/`)
 - ✅ Threat intel enrichment (URLhaus domain reputation)
 - ✅ ntfy.sh phone alerts
@@ -119,12 +119,14 @@ Built:
 
 - validate expected fields, types, bounds, and allowed values from the LLM
 - detect hallucinated domains that don't appear in the original event
-- fail safely if the LLM API is unavailable (returns unknown/low/0.0)
+- fall back to unknown/low/0.0 if the model's reply isn't valid JSON, so a garbled answer is logged, not alerted
 - skip benign events before enrichment (save API quota, don't query google.com against a malware blocklist)
 
 Planned:
 
 - rate-limit repeated alerts to avoid notification fatigue
+- write a record for events whose model call fails, instead of skipping them (an API outage currently drops events silently)
+- input-side prompt-injection defences: delimit the log event and use the API's JSON schema mode
 
 ---
 
@@ -132,12 +134,13 @@ Planned:
 
 The repo includes a small labelled evaluation set for DNS events.
 
-The evaluation harness measures:
+The evaluation harness reports:
 
 - verdict accuracy
-- false positives / false negatives
 - MITRE ATT&CK mapping accuracy (gemini mode)
-- whether the LLM returns valid structured output
+- expected vs predicted for every event, so each false positive and miss is visible
+
+Events that fail the guardrails count as wrong. Planned: separate false positive / false negative counts.
 
 Initial examples include benign DNS lookups (things I actually visit), suspicious long-subdomain activity, and C2-like DNS examples (things I hope my devices don't visit).
 
@@ -160,12 +163,9 @@ Initial examples include benign DNS lookups (things I actually visit), suspiciou
 - [x] Install and configure Pi-hole
 - [x] Initial deployment to Pi (tested against real logs)
 
-### In progress
-
-- [ ] Live tail mode (continuous monitoring)
-
 ### Next
 
+- [ ] Live tail mode (continuous monitoring)
 - [ ] Markdown incident summaries
 - [ ] Post-enrichment guardrails (verdict re-evaluation)
 - [ ] Pre-alert guardrails (severity gate, rate limiting)
